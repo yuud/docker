@@ -92,7 +92,7 @@ swapon /root/swapfile #启用swap文件
 4.使系统开机时自启用，在文件/etc/fstab中添加一行：
 /root/swapfile swap swap defaults 0 0
 
-5. 也可以编译成功后，将phalcon.so拷贝至宿主机的zPhal-dockerfiles/files/php/extensions目录
+5.也可以编译成功后，将phalcon.so拷贝至宿主机的zPhal-dockerfiles/files/php/extensions目录
 ```
 #docker基本操作
 docker start 2c5aeac8bc56 #启动容器
