@@ -7,7 +7,7 @@ ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Install package and PHP Core extensions
-RUN yum update && yum install -y \
+RUN apt-get update && apt-get install -y \
         git \
         libfreetype6-dev \
         libjpeg62-turbo-dev \

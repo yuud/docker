@@ -4,6 +4,7 @@ dockerfiles that support zPhal's working environment
 ## 简介
 用 Docker 容器服务的方式搭建 zPhal 环境，易于维护、升级。使用前需了解 Docker 的基本概念，常用基本命令。
 可以一条条命令执行docker命令来构建镜像，容器。这里推荐使用 docker-compose 来管理，执行项目，下面是使用流程。
+参考仓库：https://github.com/goozp/zPhal-dockerfiles
 
 相关软件版本：
 - PHP 7.2
@@ -76,3 +77,38 @@ cd zPhal-dockerfiles/app
 
 docker run -it --rm -v `pwd`:/data/www/ -w /data/www/zPhal files_php-fpm composer update
 ```
+
+### 6. 对原仓库的改动
+由于使用过程中，因为编译phalcon3.3.1占用内存不足，导致安装php扩展失败，目前解决方法是增加交换空间
+1.创建要作为swap分区的文件:增加1GB大小的交换分区，则命令写法如下，其中的count等于想要的块的数量（bs*count=文件大小）。
+dd if=/dev/zero of=/root/swapfile bs=1M count=1024
+
+2.格式化为交换分区文件:
+mkswap /root/swapfile #建立swap的文件系统
+
+3.启用交换分区文件:
+swapon /root/swapfile #启用swap文件
+
+4.使系统开机时自启用，在文件/etc/fstab中添加一行：
+/root/swapfile swap swap defaults 0 0
+
+5. 也可以编译成功后，将phalcon.so拷贝至宿主机的zPhal-dockerfiles/files/php/extensions目录
+```
+docker start 2c5aeac8bc56 #启动容器
+
+docker stop 2c5aeac8bc56 #停止容器
+
+docker exec -it 14cbf029a3e2 /bin/bash #进入一个容器
+
+docker ps -a #查看容器
+
+docker rmi 14cbf029a3e2#删除镜像(如果删不掉，加-f参数)
+
+docker cp 2c5aeac8bc56:/usr/local/lib/php/extensions/no-debug-non-zts-20170718/phalcon.so ~/zPhal-dockerfiles/files/php/extensions/
+```
+6.修改原来的docker-composer.yml
+在services:php-fpm:下新增
+```
+ - ./php/extensions/phalcon.so:/usr/local/lib/php/extensions/no-debug-non-zts-20170718/phalcon.so:ro
+```
+然后可以正常的docker-compose up && docker-compose down了
