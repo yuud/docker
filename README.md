@@ -94,6 +94,7 @@ swapon /root/swapfile #启用swap文件
 
 5. 也可以编译成功后，将phalcon.so拷贝至宿主机的zPhal-dockerfiles/files/php/extensions目录
 ```
+#docker基本操作
 docker start 2c5aeac8bc56 #启动容器
 
 docker stop 2c5aeac8bc56 #停止容器
